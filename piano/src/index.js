@@ -21,7 +21,7 @@ let fingerLookupIndices = {
   pinky: [0, 17, 18, 19, 20],
 };
 
-// Definieer de noten van de piano en hun corresponderende frequenties
+// Define the key notes freqentie
 const pianoKeys = {
   G: "G4",
   A: "A4",
@@ -30,7 +30,7 @@ const pianoKeys = {
 
 const audioContext = new AudioContext();
 
-// Start de applicatie
+// Start the application
 async function main() {
   model = await handpose.load();
   const video = await setupCamera();
@@ -38,7 +38,7 @@ async function main() {
   startLandmarkDetection(video);
 }
 
-// Setup van de webcam
+// Setup the webcam
 async function setupCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     throw new Error("Webcam not available");
@@ -62,7 +62,7 @@ async function setupCamera() {
   });
 }
 
-// Start de landmark-detectie
+// Start the landmark-detection
 async function startLandmarkDetection(video) {
   videoWidth = video.videoWidth;
   videoHeight = video.videoHeight;
@@ -82,12 +82,12 @@ async function startLandmarkDetection(video) {
   ctx.fillStyle = "red";
 
   ctx.translate(canvas.width, 0);
-  ctx.scale(-1, 1); // Flip video horizontally
+  ctx.scale(-1, 1);
 
   predictLandmarks();
 }
 
-// Voorspel de locatie van de vingers in de videostream
+// Predict the location of the fingers
 async function predictLandmarks() {
   ctx.drawImage(
     video,
@@ -111,6 +111,7 @@ async function predictLandmarks() {
   requestAnimationFrame(predictLandmarks);
 }
 
+// check if the note is already played
 let notePlayed = false;
 
 function checkNotePlayed(predictions) {
@@ -141,12 +142,14 @@ function checkNotePlayed(predictions) {
   }
 }
 
+// freqeuncy of the notes
 const NoteToFrequency = {
   G4: 392.0,
   B4: 493.88,
   A4: 440.0,
 };
 
+// playes the key notes sound
 function playSound(note) {
   const frequency = NoteToFrequency[note];
 
@@ -159,10 +162,7 @@ function playSound(note) {
 
   const oscillator = audioContext.createOscillator();
   oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(
-    frequency,
-    audioContext.currentTime
-  );
+  oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
 
   const gainNode = audioContext.createGain();
   oscillator.connect(gainNode);
@@ -179,32 +179,24 @@ function playSound(note) {
 const k = 3;
 const machine = new kNear(k);
 
-// Event listener voor de piano keys
-document
-  .querySelectorAll(".key")
-  .forEach((key) => {
-    key.addEventListener("click", () => {
-      const note = key.getAttribute("data-note");
-      playSound(pianoKeys[note]);
-    });
+// Event listener for the piano keys
+document.querySelectorAll(".key").forEach((key) => {
+  key.addEventListener("click", () => {
+    const note = key.getAttribute("data-note");
+    playSound(pianoKeys[note]);
   });
+});
 
-// Event handler voor het leren van gebaren
+// Event handler to learn the gestures
 document
   .getElementById("G_note")
-  .addEventListener("click", (e) =>
-    buttonGNoteHandler(e, predictionsArray)
-  );
+  .addEventListener("click", (e) => buttonGNoteHandler(e, predictionsArray));
 document
   .getElementById("A_note")
-  .addEventListener("click", (e) =>
-    buttonANoteHandler(e, predictionsArray)
-  );
+  .addEventListener("click", (e) => buttonANoteHandler(e, predictionsArray));
 document
   .getElementById("B_note")
-  .addEventListener("click", (e) =>
-    buttonBNoteHandler(e, predictionsArray)
-  );
+  .addEventListener("click", (e) => buttonBNoteHandler(e, predictionsArray));
 
 function buttonGNoteHandler(e, predictions) {
   e.preventDefault();
@@ -224,7 +216,7 @@ function buttonBNoteHandler(e, predictions) {
   machine.learn(predictionsArray, "B_note");
 }
 
-// Toon de eerste 20 waarden in een log - elk punt heeft een X, Y, Z waarde
+// Show the first 20 values in a log - each point has an X, Y, Z value
 function logData(predictions) {
   predictionsArray = predictions[0].landmarks.reduce(
     (accumulator, currentValue) => {
@@ -240,7 +232,7 @@ function logData(predictions) {
   log.innerText = `I think it's a ${prediction}`;
 }
 
-// Teken hand en vingers
+// Draw hand and fingers
 function drawKeypoints(ctx, keypoints) {
   const keypointsArray = keypoints;
 
@@ -258,14 +250,14 @@ function drawKeypoints(ctx, keypoints) {
   }
 }
 
-// Teken een punt
+// Draw a dot
 function drawPoint(ctx, y, x, r) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);
   ctx.fill();
 }
 
-// Teken een lijn
+// Draw a line
 function drawPath(ctx, points, closePath) {
   const region = new Path2D();
   region.moveTo(points[0][0], points[0][1]);
@@ -280,8 +272,18 @@ function drawPath(ctx, points, closePath) {
   ctx.stroke(region);
 }
 
+// randomize the array
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// Transfer data to JSON file
 function saveData() {
-  const dataStr = JSON.stringify(machine.getTrainingData()); // Adjust this based on where your data resides in kNear
+  const dataStr = JSON.stringify(machine.getTrainingData());
   const blob = new Blob([dataStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
@@ -299,44 +301,79 @@ function saveData() {
 
 document.getElementById("save_button").addEventListener("click", saveData);
 
-// Inlezen van data
+// Load the data
 function loadData(event) {
   const file = event.target.files[0];
   const reader = new FileReader();
   reader.onload = function (event) {
     let data = JSON.parse(event.target.result);
     data = cleanData(data);
+
+    // Randomize the data
+    data = shuffleArray(data);
+
     machine.setTrainingData(data);
   };
   reader.readAsText(file);
 }
 
-document
-  .getElementById("load_button")
-  .addEventListener("change", loadData);
+document.getElementById("load_button").addEventListener("change", loadData);
 
-// Opschonen van data
+// clean data
 function cleanData(data) {
-    return data.filter((item) => {
-      // Controleer of predictionsArray aanwezig is en minimaal 20 items bevat
-      if (item.v && item.v.length >= 20 && isValidPose(item.lab)) {
-        // Voeg hier eventuele andere opschoningslogica toe, indien nodig
-        // Bijvoorbeeld, controleer op andere criteria of valideer de data
-        return true;
-      } else {
-        // Log eventuele ongeldige data
-        console.warn(`Invalid data for item: ${JSON.stringify(item)}`);
-        return false;
-      }
-    });
-  }
-  
-  // Functie om te controleren of de pose geldig is
-  function isValidPose(poseLabel) {
-    // Definieer hier je criteria voor geldige poses
-    // Bijvoorbeeld, alleen bepaalde pose labels toestaan
-    const validPoses = ["G_note", "A_note", "B_note"];
-    return validPoses.includes(poseLabel);
+  return data.filter((item) => {
+    if (item.v && item.v.length >= 20 && isValidPose(item.lab)) {
+      return true;
+    } else {
+      console.warn(`Invalid data for item: ${JSON.stringify(item)}`);
+      return false;
+    }
+  });
 }
-    
-main()
+
+// check if the data is valid
+function isValidPose(poseLabel) {
+  const validPoses = ["G_note", "A_note", "B_note"];
+  return validPoses.includes(poseLabel);
+}
+
+// accuracy button
+const evaluateAccuracyButton = document.getElementById(
+  "evaluate_accuracy_button"
+);
+evaluateAccuracyButton.addEventListener("click", evaluateAccuracy);
+
+const evaluation = document.getElementById("prediction");
+evaluation.style.display = "none";
+
+// Function to calculate accuracy
+async function evaluateAccuracy() {
+  // Load the test data
+  const testDataImport = await fetch("../test_data/training_data-2.json");
+  const testData = shuffleArray(await testDataImport.json());
+
+  let correct = 0;
+  let incorrect = 0;
+
+  evaluation.style.display = "none";
+
+  // loop through the test data and add to the (in)correct count
+  for (const data of testData) {
+    const result = machine.classify(data.v);
+
+    if (result === data.lab) {
+      correct++;
+    } else {
+      incorrect++;
+    }
+  }
+
+  // Display the percent of correct answers
+  const number = (correct / (correct + incorrect)) * 100;
+  const roundedNumber = Math.round(number * 100) / 100;
+
+  evaluation.innerHTML = `${roundedNumber}%`;
+  evaluation.style.display = "block";
+}
+
+main();
