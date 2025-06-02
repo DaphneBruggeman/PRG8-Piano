@@ -348,18 +348,30 @@ evaluation.style.display = "none";
 
 // Function to calculate accuracy
 async function evaluateAccuracy() {
-  // Load the test data
+  // Load en shuffle de testdata
   const testDataImport = await fetch("../test_data/training_data-2.json");
   const testData = shuffleArray(await testDataImport.json());
 
   let correct = 0;
   let incorrect = 0;
 
+  // Confusion matrix opzetten
+  const labels = ["G_note", "A_note", "B_note"];
+  const confusion = {};
+  labels.forEach(actual => {
+    confusion[actual] = {};
+    labels.forEach(predicted => {
+      confusion[actual][predicted] = 0;
+    });
+  });
+
   evaluation.style.display = "none";
 
-  // loop through the test data and add to the (in)correct count
+  // Vul confusion matrix
   for (const data of testData) {
     const result = machine.classify(data.v);
+
+    confusion[data.lab][result] += 1;
 
     if (result === data.lab) {
       correct++;
@@ -368,11 +380,27 @@ async function evaluateAccuracy() {
     }
   }
 
-  // Display the percent of correct answers
+  // Accuracy tonen
   const number = (correct / (correct + incorrect)) * 100;
   const roundedNumber = Math.round(number * 100) / 100;
-
   evaluation.innerHTML = `${roundedNumber}%`;
+
+  // Confusion matrix HTML genereren
+  let matrixHTML = `
+    <table border="1" style="margin-top:10px;">
+      <tr>
+        <th></th>
+        ${labels.map(l => `<th>Voorspeld: ${l}</th>`).join('')}
+      </tr>
+      ${labels.map(actual => `
+        <tr>
+          <th>Waar: ${actual}</th>
+          ${labels.map(predicted => `<td>${confusion[actual][predicted]}</td>`).join('')}
+        </tr>
+      `).join('')}
+    </table>
+  `;
+  evaluation.innerHTML += matrixHTML;
   evaluation.style.display = "block";
 }
 
