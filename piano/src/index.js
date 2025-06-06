@@ -349,7 +349,7 @@ evaluation.style.display = "none";
 // Function to calculate accuracy
 async function evaluateAccuracy() {
   // Load en shuffle de testdata
-  const testDataImport = await fetch("../test_data/training_data-2.json");
+  const testDataImport = await fetch("../piano/test_data/training_data_2.json");
   const testData = shuffleArray(await testDataImport.json());
 
   let correct = 0;
