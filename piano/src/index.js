@@ -111,7 +111,7 @@ async function predictLandmarks() {
   requestAnimationFrame(predictLandmarks);
 }
 
-// check if the note is already played
+// Check if the note is already played
 let notePlayed = false;
 
 function checkNotePlayed(predictions) {
@@ -142,14 +142,14 @@ function checkNotePlayed(predictions) {
   }
 }
 
-// freqeuncy of the notes
+// Freqeuncy of the notes
 const NoteToFrequency = {
   G4: 392.0,
   B4: 493.88,
   A4: 440.0,
 };
 
-// playes the key notes sound
+// Playes the key notes sound
 function playSound(note) {
   const frequency = NoteToFrequency[note];
 
@@ -272,7 +272,7 @@ function drawPath(ctx, points, closePath) {
   ctx.stroke(region);
 }
 
-// randomize the array
+// Randomize the array
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -319,7 +319,7 @@ function loadData(event) {
 
 document.getElementById("load_button").addEventListener("change", loadData);
 
-// clean data
+// Clean data
 function cleanData(data) {
   return data.filter((item) => {
     if (item.v && item.v.length >= 20 && isValidPose(item.lab)) {
@@ -331,13 +331,13 @@ function cleanData(data) {
   });
 }
 
-// check if the data is valid
+// Check if the data is valid
 function isValidPose(poseLabel) {
   const validPoses = ["G_note", "A_note", "B_note"];
   return validPoses.includes(poseLabel);
 }
 
-// accuracy button
+// Accuracy button
 const evaluateAccuracyButton = document.getElementById(
   "evaluate_accuracy_button"
 );

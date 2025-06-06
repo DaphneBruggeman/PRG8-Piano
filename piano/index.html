@@ -4,30 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0, user-scalable=no" />
   <link rel="stylesheet" href="./css/style.css" />
-  <!-- Load three.js -->
   <script defer src="https://unpkg.com/@tensorflow/tfjs-core@2.1.0/dist/tf-core.js"></script>
   <script defer src="https://unpkg.com/@tensorflow/tfjs-converter@2.1.0/dist/tf-converter.js"></script>
   <script defer src="src/knear.js"></script>
-
-
-  <!-- GPU backend -->
   <script defer src="https://unpkg.com/@tensorflow/tfjs-backend-webgl@2.1.0/dist/tf-backend-webgl.js"></script>
-  <!-- CPU backend -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-cpu"></script> -->
-  <!-- WASM backend -->
-  <!-- <script src="https://unpkg.com/@tensorflow/tfjs-backend-wasm@2.1.0/dist/tf-backend-wasm.js"></script> -->
-
   <script defer src="https://unpkg.com/@tensorflow-models/handpose@0.0.6/dist/handpose.js"></script>
   <script defer src="./src/index.js"></script>
 </head>
 
 <body>
   <h1>Virtual Piano with Handpose</h1>
+   <h2>This is your new methode to make music!</h2>
   <div id="container">
     <canvas id="output"></canvas>
     <video id="video" playsinline></video>
   </div>
-  <h2>Landmarks array</h2>
+  <h3>G note = Full hand, A note = Closed hand, B note = Peace sign </h3>
+  <p>To train your model make a handpose to your linking en press the correct note.</p>
+  <p>Keep doing this till you have enough examples made, Than save the data</p>
+  <br>
   <div class="button-container">
     <button id="G_note">G note</button>
     <button id="A_note">A note</button>
@@ -40,7 +35,6 @@
   <div id="array"></div>
   <div id="prediction"></div>
 
-  <!-- Piano -->
   <div id="piano">
     <div data-note="C" class="key white"></div>
     <div data-note="Db" class="key black"></div>

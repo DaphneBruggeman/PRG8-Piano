@@ -4,7 +4,7 @@ body {
     width: 100vw;
     height: 100vh;
     font-family: sans-serif;
-    background-color: #bbd5dc;
+    background-color: #dcbbd8;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -53,3 +53,8 @@ body {
   .black {
     background-color: #000;
   }
+
+  p {
+    margin: 0;
+    padding: 0;
+}

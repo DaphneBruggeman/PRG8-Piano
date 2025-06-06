@@ -5,8 +5,6 @@ class kNear {
         this.array_size = -1
     }
 
-    //compute the euclidean distance between two vectors
-    //function assumes vectors are arrays of equal length
     dist(v1, v2) {
         let sum = 0
         v1.forEach( (val, index) => {
@@ -24,14 +22,14 @@ class kNear {
     }
 
     mode(store) {
-        let frequency = {} // array of frequency.
-        let max = 0 // holds the max frequency.
-        let result // holds the max frequency element.
+        let frequency = {} 
+        let max = 0 
+        let result 
         for (let v in store) {
-            frequency[store[v]] = (frequency[store[v]] || 0) + 1; // increment frequency.
-            if (frequency[store[v]] > max) { // is this frequency > max so far ?
-                max = frequency[store[v]] // update max.
-                result = store[v] // update result.
+            frequency[store[v]] = (frequency[store[v]] || 0) + 1; 
+            if (frequency[store[v]] > max) { 
+                max = frequency[store[v]] 
+                result = store[v]
             }
         }
         return result
@@ -39,21 +37,15 @@ class kNear {
 
     checkInput(v) {
         if (Array.isArray(v)) {
-            // array is correct
             if (v.length > 0) {
-                // array contains values
                 if (typeof v[0] == 'number') {
-                    // first value is a number
                     if (this.array_size > -1) {
-                        // training has data to comapre the size to
                         if (v.length == this.array_size) {
-                            // size of the array is correct
                             return true;
                         } else {
                             console.log(`ERROR: learn en classify verwachten een array met numbers van dezelfde lengte, je stuurt nu een array met lengte ${v.length}, terwijl je eerder lengte ${this.array_size} gebruikt hebt.`); 
                         }
                     } else {
-                        // first value set training size
                         this.array_size = v.length;
                         return true;
                     }
@@ -67,22 +59,16 @@ class kNear {
             console.log(`ERROR: learn en classify verwachten een array met numbers, je stuurt nu geen array, maar ${typeof v}.`);
         }
 
-        // something was wrong for this vector
         return false
     }
 
-    //
-    // PUBLIC : learn, classify
-    //
 
-    //add a point to the training set
     learn(vector, label) {
         this.checkInput(vector)
         let obj = { v: vector, lab: label }
         this.training.push(obj)
     }
 
-    // classify a new unknown point
     classify(v) {
         this.checkInput(v)
         let voteBloc = []
@@ -121,12 +107,10 @@ class kNear {
         return this.mode(votes)
     }
 
-     // Method to get the training data
      getTrainingData() {
         return this.training;
     }
 
-    // Method to set the training data
     setTrainingData(data) {
         if (Array.isArray(data)) {
             this.training = data;
