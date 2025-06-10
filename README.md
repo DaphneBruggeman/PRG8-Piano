@@ -2,6 +2,8 @@
 
 De *Virtual Piano with Handpose* is een webapplicatie waarmee je een piano kunt bespelen met alleen je handgebaren. Door gebruik te maken van je webcam en een handpose-model, kun je verschillende pianotoetsen activeren zonder fysiek contact. Deze applicatie is ontwikkeld als één van de twee opdrachten voor het vak **Programmeren 8**.
 
+https://stud.hosted.hr.nl/0986809/piano/
+
 ##  Inhoud
 
 - [Installatie](#installatie)
